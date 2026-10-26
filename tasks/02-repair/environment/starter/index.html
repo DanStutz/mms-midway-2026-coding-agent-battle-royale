@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raccoon Help Desk</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f1e9;color:#173c35;font:16px system-ui,sans-serif}
+main{max-width:1080px;margin:auto;padding:52px 24px}.eyebrow{font-size:12px;letter-spacing:.15em;font-weight:750}
+h1{font-size:clamp(32px,6vw,60px);line-height:1.05;margin:18px 0}p{line-height:1.6;color:#52675f}
+.panel{background:#fffefa;border:1px solid #d9ded2;border-radius:18px;padding:24px;margin-top:30px}
+form{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:16px;align-items:end}
+label{display:block;font-size:14px;font-weight:650;margin-bottom:8px}input,select,button{font:inherit;min-height:46px;border-radius:9px}
+input,select{border:1px solid #a9b9ad;background:white;padding:10px;width:100%;min-width:0}
+button{border:0;padding:10px 20px;background:#174e3d;color:white;cursor:pointer;font-weight:650}
+button:hover{background:#0e382b}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:30px 0 16px}
+.toolbar select{width:150px}.toolbar h2{font-size:20px}.list{display:grid;gap:12px}article{background:white;padding:20px;border:1px solid #d9ded2;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-width:0}
+.ticket-copy{min-width:0}h3{font-size:17px;margin:0 0 10px;overflow-wrap:anywhere}.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:13px}
+.badge{background:#edf2ea;border-radius:99px;padding:5px 9px}.Urgent{background:#ffe5c2}#error{color:#9d3022;min-height:24px;margin:12px 0 0}
+.empty{padding:32px;border:1px dashed #bdcbbd;border-radius:12px;text-align:center}footer{font-size:13px;margin-top:32px;color:#62766b}
+@media(max-width:650px){main{padding:28px 16px}.panel{padding:18px}form{grid-template-columns:minmax(0,1fr)}article{align-items:flex-start;flex-direction:column}.toolbar{align-items:flex-start}}
+</style></head><body><main>
+<div class="eyebrow">AFTER HOURS / SUPPORT DEPARTMENT</div><h1>Raccoon Help Desk</h1>
+<p>We take your tickets. And occasionally your lunch.</p>
+<section class="panel" aria-label="New support ticket"><form id="create-form" novalidate>
+<div><label for="title">Ticket title</label><input id="title" autocomplete="off" placeholder="What has gone mysteriously missing?"></div>
+<div><label for="priority">Priority</label><select id="priority"><option>Low</option><option selected>Normal</option><option>Urgent</option></select></div>
+<button type="submit">Create ticket</button></form><p id="error" role="alert"></p></section>
+<div class="toolbar"><h2>The night shift queue</h2><div><label for="status-filter">Status filter</label><select id="status-filter"><option>All</option><option>Open</option><option>Resolved</option></select></div></div>
+<div id="tickets" class="list"></div><footer>Average response time: one suspicious rustling sound.</footer>
+</main><script>
+const storageKey = 'raccoon-helpdesk-tickets';
+let tickets = [];
+try { const stored = JSON.parse(localStorage.getItem(storageKey) || '[]'); if (Array.isArray(stored)) tickets = stored; } catch {}
+const titleInput = document.querySelector('#title');
+const priorityInput = document.querySelector('#priority');
+const filterInput = document.querySelector('#status-filter');
+const list = document.querySelector('#tickets');
+function save() { localStorage.setItem(storageKey, JSON.stringify(tickets)); }
+function render() {
+  list.replaceChildren();
+  const visible = tickets.filter(t => filterInput.value === 'All' || t.status === filterInput.value);
+  for (const t of visible) {
+    const article = document.createElement('article'); article.dataset.testid = 'ticket';
+    const copy = document.createElement('div'); copy.className = 'ticket-copy';
+    const heading = document.createElement('h3'); heading.innerHTML = t.title;
+    const meta = document.createElement('div'); meta.className = 'meta';
+    for (const [text, className] of [[t.priority, 'badge ' + t.priority], [t.status, 'badge']]) {
+      const badge = document.createElement('span'); badge.className = className; badge.textContent = text; meta.append(badge);
+    }
+    copy.append(heading, meta); article.append(copy);
+    if (t.status === 'Open') {
+      const button = document.createElement('button'); button.textContent = 'Resolve'; button.type = 'button';
+      button.addEventListener('click', () => { tickets.forEach(item => item.status = 'Resolved'); render(); }); article.append(button);
+    }
+    list.append(article);
+  }
+  if (!visible.length) { const empty = document.createElement('p'); empty.className = 'empty'; empty.textContent = 'No tickets here. Check behind the dumpster.'; list.append(empty); }
+}
+document.querySelector('#create-form').addEventListener('submit', event => {
+  event.preventDefault(); const title = titleInput.value.trim(); const error = document.querySelector('#error');
+  if (!title) { error.textContent = 'Enter a ticket title.'; return; }
+  error.textContent = ''; tickets.push({ id: crypto.randomUUID(), title, priority: priorityInput.value, status: 'Open' });
+  titleInput.value = ''; render(); titleInput.focus();
+});
+filterInput.addEventListener('change', render); render();
+</script></body></html>

@@ -1,0 +1,12 @@
+AGENT ARENA - PUBLIC SOURCE COPY
+
+Open PowerShell in this folder. Python 3.12+ and Docker Desktop are required.
+Start Docker Desktop with Linux containers, then run:
+
+  powershell -ExecutionPolicy Bypass -File .\SETUP.ps1
+  powershell -ExecutionPolicy Bypass -File .\PREPARE-ARENA.ps1
+  powershell -ExecutionPolicy Bypass -File .\START-ARENA.ps1
+
+Open http://127.0.0.1:8090 and connect your own API key using the local buttons.
+No keys or sign-ins are supplied. Foundry requires your own resource/deployments.
+Read README.md for repeated harnesses, optional CLI sign-ins and publication notes.

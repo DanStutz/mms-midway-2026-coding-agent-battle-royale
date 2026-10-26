@@ -1,0 +1,12 @@
+.git
+.arena
+work
+.venv
+node_modules
+__pycache__
+*.zip
+.env*
+**/auth.json
+**/credentials*
+*.pem
+*.key

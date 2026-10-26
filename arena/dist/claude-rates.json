@@ -1,0 +1,98 @@
+{
+  "source": "https://claude.com/pricing#api",
+  "verified": "2026-10-26",
+  "rates": {
+    "claude-fable-5-1": {
+      "cached": 0.25,
+      "write": 12.5,
+      "input": 10.0,
+      "output": 50.0
+    },
+    "claude-opus-5-5": {
+      "cached": 0.2,
+      "write": 5.0,
+      "input": 4.0,
+      "output": 20.0
+    },
+    "claude-sonnet-5-5": {
+      "cached": 0.1,
+      "write": 2.5,
+      "input": 2.0,
+      "output": 10.0
+    },
+    "claude-haiku-5-5": {
+      "cached": 0.01,
+      "write": 0.125,
+      "input": 0.1,
+      "output": 0.5,
+      "threshold": 100000,
+      "above": {
+        "cached": 0.05,
+        "write": 0.625,
+        "input": 0.5,
+        "output": 2.5
+      }
+    },
+    "claude-haiku-4-5": {
+      "cached": 0.1,
+      "write": 1.25,
+      "input": 1.0,
+      "output": 5.0
+    },
+    "claude-sonnet-5": {
+      "cached": 0.2,
+      "write": 2.5,
+      "input": 2.0,
+      "output": 10.0
+    },
+    "claude-opus-5": {
+      "cached": 0.5,
+      "write": 6.25,
+      "input": 5.0,
+      "output": 25.0
+    },
+    "claude-fable-5": {
+      "cached": 1.0,
+      "write": 12.5,
+      "input": 10.0,
+      "output": 50.0
+    },
+    "claude-opus-4-8": {
+      "cached": 0.5,
+      "write": 6.25,
+      "input": 5.0,
+      "output": 25.0
+    },
+    "claude-sonnet-4-6": {
+      "cached": 0.3,
+      "write": 3.75,
+      "input": 3.0,
+      "output": 15.0
+    },
+    "claude-opus-4-7": {
+      "cached": 0.5,
+      "write": 6.25,
+      "input": 5.0,
+      "output": 25.0
+    },
+    "claude-opus-4-6": {
+      "cached": 0.5,
+      "write": 6.25,
+      "input": 5.0,
+      "output": 25.0
+    },
+    "claude-sonnet-4-5": {
+      "cached": 0.3,
+      "write": 3.75,
+      "input": 3.0,
+      "output": 15.0
+    },
+    "claude-opus-4-5": {
+      "cached": 0.5,
+      "write": 6.25,
+      "input": 5.0,
+      "output": 25.0
+    }
+  },
+  "assumptions": "Standard global API token rates; 5-minute cache writes. Unknown cache TTL is valued at 5 minutes. Taxes, tool fees, fast mode and US-only premiums excluded. Estimates are not invoices."
+}

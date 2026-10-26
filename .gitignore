@@ -1,0 +1,26 @@
+# Runtime data, sign-in caches, logs and generated model output
+.arena/
+work/
+auth/
+jobs/
+runs/
+materials/
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log
+*.zip
+# Credentials are entered locally; never commit credential files
+.env
+.env.*
+!.env.example
+**/auth.json
+**/credentials.json
+**/credentials.*
+*.pem
+*.key
+*.pfx
+*.p12
