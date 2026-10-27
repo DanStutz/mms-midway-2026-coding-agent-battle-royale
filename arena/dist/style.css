@@ -17,3 +17,42 @@
 .arena-bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:14px 18px;margin-bottom:18px;border:1px solid var(--border);border-radius:12px;background:#101823}.arena-identity{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}.arena-identity label{margin:0;white-space:nowrap;color:var(--muted)}#arena-name{width:100%;max-width:330px;color:var(--text);background:#0d151f;border:1px solid #354354;padding:8px 10px;border-radius:7px}.arena-navigation{display:flex;gap:10px;align-items:center}.arena-navigation select{max-width:270px;font-size:12px}#arena-concurrency{flex-basis:100%;margin:0}.presentation .arena-bar{padding:8px 12px}.presentation #arena-concurrency{display:none}@media(max-width:700px){.arena-navigation{width:100%}.arena-navigation select{flex:1;max-width:none}}
 
 .tile-model-heading{flex-wrap:wrap}.tile-actions{display:flex;gap:6px;flex-wrap:wrap}.tile-actions button{font-size:10px;padding:4px 7px}.add-instance{color:var(--accent)}.remove-instance{color:var(--muted)}
+
+/* Controller themes leave generated app previews in their original designs. */
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f6fa;--panel:#fff;--border:#c6d1dd;--muted:#4d6073;--text:#172536;--lime:#3b6811;--accent-ink:#285a80}
+:root[data-theme="light"] .quiet{background:#e8eef5}
+:root[data-theme="light"] label{color:#293e53}
+:root[data-theme="light"] textarea,:root[data-theme="light"] select,:root[data-theme="light"] #arena-name,:root[data-theme="light"] #aider-key,:root[data-theme="light"] #claude-key,:root[data-theme="light"] #foundry-dialog input{background:#fff;border-color:#a6b7c8;color:var(--text)}
+:root[data-theme="light"] .chip{background:#fff}
+:root[data-theme="light"] .chip:has(input:not(:checked)){opacity:1}
+:root[data-theme="light"] .primary{background:#3b6811;border-color:#3b6811;color:#fff}
+:root[data-theme="light"] .primary:hover{background:#2c500c;border-color:#2c500c}
+:root[data-theme="light"] .stop{border-color:#b5463f;color:#9b231f}
+:root[data-theme="light"] .status.error{color:#9b231f}
+:root[data-theme="light"] .status.timed_out{color:#885000}
+:root[data-theme="light"] .detail-strip,:root[data-theme="light"] .arena-bar{background:#eaf0f6;border-color:var(--border)}
+:root[data-theme="light"] .panel{background:#f8fafc}
+:root[data-theme="light"] .activity-list li{border-color:#d7e0e9;color:#304a63}
+:root[data-theme="light"] .output-text{color:#243c52}
+:root[data-theme="light"] .model-bar{border-color:var(--border)}
+:root[data-theme="light"] .used-model{color:#4d6073}
+:root[data-theme="light"] .run-notice{background:#fff1d8;color:#744100;border-color:#d8b56a}
+:root[data-theme="light"] #message{background:#fff0e2;color:#754019;border-color:#c78646}
+:root[data-theme="light"] footer{color:#4d6073}
+:root[data-theme="light"] .cost-row{background:#edf5e8;border-color:#c2d4b7}
+:root[data-theme="light"] .cost-caption,:root[data-theme="light"] .cost-basis{color:#3e5931}
+:root[data-theme="light"] .cost-summary{background:#edf5e8;border-color:#b9cfac}
+:root[data-theme="light"] dialog{box-shadow:0 24px 80px #20334633}
+:root[data-theme="light"] dialog::backdrop{background:#20334666}
+:root[data-theme="light"] [data-harness="codex"]{--accent-ink:#1d5da8}
+:root[data-theme="light"] [data-harness="opencode"]{--accent-ink:#8c4916}
+:root[data-theme="light"] [data-harness="pi"]{--accent-ink:#6844a2}
+:root[data-theme="light"] [data-harness="aider"]{--accent-ink:#785800}
+:root[data-theme="light"] [data-harness="goose"]{--accent-ink:#146449}
+:root[data-theme="light"] [data-harness="cline"]{--accent-ink:#94385c}
+:root[data-theme="light"] [data-harness="mini-swe-agent"]{--accent-ink:#156074}
+:root[data-theme="light"] [data-harness="openhands"]{--accent-ink:#914615}
+:root[data-theme="light"] [data-harness="qwen"]{--accent-ink:#466719}
+:root[data-theme="light"] .tile-model-label,:root[data-theme="light"] .choose-model,:root[data-theme="light"] .add-instance,:root[data-theme="light"] .activity-list li:before{color:var(--accent-ink)}
+:root[data-theme="light"] .contestant-head{border-top-color:var(--accent-ink)}
+:root[data-theme="light"] .tab.active{border-bottom-color:var(--accent-ink)}

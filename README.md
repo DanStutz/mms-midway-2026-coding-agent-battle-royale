@@ -12,6 +12,7 @@ time, token usage and estimated USD value.
 - Multiple arena tabs for independent prompts, with shared local connections.
 - OpenAI and Anthropic API connections; separate Microsoft Foundry configuration.
 - Run history, downloadable results, cost CSV and presentation mode.
+- Light/dark mode toggle with a saved browser preference shared across arena tabs.
 
 ## Quick start on Windows
 
@@ -37,7 +38,13 @@ No API key, saved sign-in, or private endpoint is included in this copy.
 For Foundry, click **Connect Foundry** and enter your own resource inference URL,
 optional project URL, resource key and actual deployment names. Generic placeholders
 are shown; a model catalog entry alone does not prove a deployment exists. Azure
-USD stays unknown until deployment-specific pricing is configured.
+USD uses Microsoft public Global Standard short-context list-price estimates for
+supported GPT-5.6/GPT-6 models. Custom aliases use the underlying model entered with
+the deployment name. Estimates include reported cache reads/writes; missing cache-write
+counts are valued as ordinary input. Agreement discounts, temporary promotions,
+regional/Data Zone premiums, long-context uplifts and other deployment modes are
+excluded. Unknown models or missing usage remain unpriced. Check Rates and calculation
+and Cost CSV for model, source, verification date and assumptions.
 
 Select contestants, choose a model, enter a prompt, and **Start comparison**.
 

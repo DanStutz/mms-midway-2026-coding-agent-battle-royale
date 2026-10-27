@@ -60,9 +60,38 @@ function estimateClaude(model,metrics,snapshot){
 
 }
 
+// Published Microsoft Azure Global Standard short-context USD rates per 1M tokens.
+// Separate from direct OpenAI pricing and from the user's negotiated Azure agreement.
+const foundryVerified='2026-10-26';
+const foundryRates={
+ 'gpt-6-astra':{input:10,cached:1,write:12.5,output:50,source:'https://azure.microsoft.com/en-us/blog/gpt-6-astra-sol-and-luna-for-production-agents-in-microsoft-foundry/'},
+ 'gpt-6-sol':{input:2,cached:.2,write:2.5,output:10,source:'https://azure.microsoft.com/en-us/blog/gpt-6-astra-sol-and-luna-for-production-agents-in-microsoft-foundry/'},
+ 'gpt-6-luna':{input:.1,cached:.01,write:.125,output:.5,source:'https://azure.microsoft.com/en-us/blog/gpt-6-astra-sol-and-luna-for-production-agents-in-microsoft-foundry/'},
+ 'gpt-6.1-sol':{input:2,cached:.1,write:2.5,output:10,source:'https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/provisioned-throughput-sizing'},
+ 'gpt-5.6-sol':{input:5,cached:.5,write:6.25,output:30,source:'https://azure.microsoft.com/en-us/blog/gpt-5-6-now-available-in-microsoft-foundry/',note:'Published base list price; temporary promotional discounts are not applied.'},
+ 'gpt-5.6-terra':{input:2,cached:.2,write:2.5,output:12,source:'https://azure.microsoft.com/en-us/blog/gpt-5-6-now-available-in-microsoft-foundry/'},
+ 'gpt-5.6-luna':{input:.2,cached:.02,write:.25,output:1.2,source:'https://azure.microsoft.com/en-us/blog/gpt-5-6-now-available-in-microsoft-foundry/'}
+};
+const foundryAssumptions='Azure Global Standard short-context public list-price estimate, not your agreement or invoice. Excludes Data Zone/regional premiums, long-context uplifts, discounts/promotions, provisioned capacity, priority/batch pricing, tool fees and taxes. Reported cache reads/writes are included in total input and counted once.';
+function foundryModel(deployment,models){
+ const mapped=models?.[deployment]?.model;
+ const name=typeof mapped==='string'?mapped:deployment;
+ return name.replace(/^openai[/:]/,'').replace(/-\d{4}-\d{2}-\d{2}$|-\d{8}$/,'');
+}
+function estimateFoundry(deployment,metrics,models){
+ const model=foundryModel(deployment,models),rate=foundryRates[model],m=metrics||{};
+ const base={rate,pricing_model:model,verified:foundryVerified,source:rate?.source||'https://azure.microsoft.com/pricing/details/azure-openai/',note:foundryAssumptions+(rate?.note?' '+rate.note:'')};
+ if(!rate)return {...base,usd:null,note:'No published Azure rate in this snapshot for '+model+'. For a custom deployment alias, enter deployment-name | underlying-model in Connect Foundry.'};
+ const input=m.input_tokens,output=m.output_tokens,knownCache=m.cache_tokens!=null,cached=knownCache?m.cache_tokens:0,knownWrite=m.cache_write_tokens!=null,write=knownWrite?m.cache_write_tokens:0;
+ if(!Number.isFinite(input)||!Number.isFinite(output))return {...base,usd:null,note:'Awaiting reported token usage. '+base.note};
+ if([input,output,cached,write].some(v=>!Number.isFinite(v)||v<0)||cached+write>input)return {...base,usd:null,note:'Azure token counters cannot be reconciled.'};
+ const parts={uncached_input:(input-cached-write)*rate.input/1e6,cached_input:cached*rate.cached/1e6,cache_write:write*rate.write/1e6,output:output*rate.output/1e6};
+ return {...base,usd:Object.values(parts).reduce((a,b)=>a+b,0),parts,cache_known:knownCache,cache_write_known:knownWrite,note:base.note+(knownCache?'':' Cache reads unavailable; all input is valued as uncached.')+(knownWrite?'':' Cache writes unavailable; unreported writes are valued as ordinary input.')};
+}
+
 function estimate(model,metrics,provider){
 
- if(provider==='foundry')return {usd:null,note:'Microsoft Foundry deployment rates are not configured. Region, deployment type and Azure pricing may differ; token usage is still recorded.',verified:''};
+ if(provider==='foundry')return estimateFoundry(model,metrics,arguments[4]);
 
  if(provider==='anthropic')return estimateClaude(model,metrics,arguments[3]);
 
@@ -82,11 +111,11 @@ function estimate(model,metrics,provider){
 
 function money(value){if(value==null||!Number.isFinite(value))return '--';return '$'+value.toFixed(value>0&&value<.01?6:4);}
 
-function rows(run){return run.harnesses.map(h=>{const item=run.contestants[h],m=item.metrics||{},model=item.model||run.models?.[h]||run.model,provider=item.provider||run.provider||'default',cost=estimate(model,m,provider,run.anthropic_pricing);return {run_id:run.id,contestant_id:h,contestant_label:item.label||item.harness||h,harness:item.harness||h,provider,endpoint:run.endpoint||'',model,status:item.status,input_tokens:m.input_tokens??'',cached_input_tokens:m.cache_tokens??'',output_tokens:m.output_tokens??'',estimated_usd:cost.usd??'',cost_basis:provider==='foundry'?'Azure deployment rate not configured':(provider==='anthropic'||provider==='openai'||['aider','goose','cline','mini-swe-agent','openhands','qwen'].includes(item.harness||h))?'API token estimate':'API-equivalent token value',actual_invoice_usd:'',rates_verified:cost.verified??verified,input_usd_per_million:cost.rate?.input??'',cached_usd_per_million:cost.rate?.cached??'',output_usd_per_million:cost.rate?.output??'',cache_write_tokens:m.cache_write_tokens??'',cache_write_usd_per_million:cost.rate?.write??'',source:provider==='anthropic'?(run.anthropic_pricing?.source||anthropic.source):provider==='foundry'?'https://azure.microsoft.com/pricing/details/ai-foundry-models/':'https://developers.openai.com/api/docs/models/'+model,assumptions:cost.note};});}
+function rows(run){return run.harnesses.map(h=>{const item=run.contestants[h],m=item.metrics||{},model=item.model||run.models?.[h]||run.model,provider=item.provider||run.provider||'default',cost=estimate(model,m,provider,run.anthropic_pricing,run.foundry_models);return {run_id:run.id,contestant_id:h,contestant_label:item.label||item.harness||h,harness:item.harness||h,provider,endpoint:run.endpoint||'',model,pricing_model:cost.pricing_model||model,status:item.status,input_tokens:m.input_tokens??'',cached_input_tokens:m.cache_tokens??'',output_tokens:m.output_tokens??'',estimated_usd:cost.usd??'',cost_basis:provider==='foundry'?'Azure Global Standard list-price estimate':(provider==='anthropic'||provider==='openai'||['aider','goose','cline','mini-swe-agent','openhands','qwen'].includes(item.harness||h))?'API token estimate':'API-equivalent token value',actual_invoice_usd:'',rates_verified:cost.verified??verified,input_usd_per_million:cost.rate?.input??'',cached_usd_per_million:cost.rate?.cached??'',output_usd_per_million:cost.rate?.output??'',cache_write_tokens:m.cache_write_tokens??'',cache_write_usd_per_million:cost.rate?.write??'',source:provider==='anthropic'?(run.anthropic_pricing?.source||anthropic.source):provider==='foundry'?cost.source:'https://developers.openai.com/api/docs/models/'+model,assumptions:cost.note};});}
 
 function csv(run){const data=rows(run),keys=Object.keys(data[0]||{});const quote=v=>'"'+String(v).replaceAll('"','""')+'"';return [keys.map(quote).join(','),...data.map(row=>keys.map(k=>quote(row[k])).join(','))].join('\r\n');}
 
-global.AgentArenaPricing={rates,verified,assumptions,estimate,money,rows,csv,setAnthropicRates,claudeRate};
+global.AgentArenaPricing={foundryRates,foundryVerified,foundryModel,estimateFoundry,rates,verified,assumptions,estimate,money,rows,csv,setAnthropicRates,claudeRate};
 
 })(typeof window==='undefined'?globalThis:window);
 
